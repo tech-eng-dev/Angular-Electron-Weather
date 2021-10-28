@@ -1,0 +1,19 @@
+.logo {
+  cursor: pointer;
+  color: rgb(26, 129, 160);
+  font-size: 15px;
+}
+
+.search-field {
+  width: 350px;
+}
+
+.search-container {
+  display: grid;
+}
+
+.result-container {
+  width: 350px;
+  height: 200px;
+  overflow: auto;
+}

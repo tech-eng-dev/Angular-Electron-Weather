@@ -1,0 +1,102 @@
+{
+  "name": "mini-weather",
+  "version": "0.0.1",
+  "main": "app.js",
+  "author": "jack",
+  "scripts": {
+    "ng": "ng",
+    "electron": "wait-on http://localhost:4200 && electron . --serve",
+    "start": "concurrently -k \"ng serve\" \"npm run electron\"",
+    "webpack:watch": "webpack --watch",
+    "start:web": "webpack-dev-server --content-base . --port 4200 --inline",
+    "build:electron:main": "tsc main.ts --outDir dist && copyfiles package.json dist && cd dist && npm install --prod && cd ..",
+    "build": "webpack --display-error-details && npm run build:electron:main",
+    "build:prod": "cross-env NODE_ENV=production npm run build",
+    "electron:serve": "npm run build:electron:main && electron ./dist --serve",
+    "electron:test": "electron ./dist",
+    "electron:dev": "npm run build && electron ./dist",
+    "electron:prod": "npm run build:prod && electron ./dist",
+    "electron:linux": "npm run build:prod && npx electron-builder build --linux",
+    "electron:windows": "npm run build:prod && npx electron-builder build --windows",
+    "electron:mac": "npm run build:prod && npx electron-builder build --mac",
+    "test": "karma start ./karma.conf.js",
+    "pree2e": "webdriver-manager update --standalone false --gecko false --quiet && npm run build",
+    "e2e": "protractor ./protractor.conf.js"
+  },
+  "private": true,
+  "build": {
+    "appId": "com.miniproject.app",
+    "category": "jack.app.min.app",
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "win": {
+      "target": [
+        "squirrel",
+        "NSIS"
+      ],
+      "icon": "build/icon.ico"
+    }
+  },
+  "dependencies": {
+    "@angular/animations": "~12.2.0",
+    "@angular/common": "~12.2.0",
+    "@angular/compiler": "~12.2.0",
+    "@angular/core": "~12.2.0",
+    "@angular/forms": "~12.2.0",
+    "@angular/material": "^12.2.12",
+    "@angular/platform-browser": "~12.2.0",
+    "@angular/platform-browser-dynamic": "~12.2.0",
+    "@angular/router": "~12.2.0",
+    "@electron/remote": "1.2.0",
+    "@fortawesome/fontawesome-free": "^5.15.4",
+    "@ngrx/store": "^12.5.1",
+    "@ngrx/store-devtools": "^12.5.1",
+    "angularx-social-login": "^4.0.1",
+    "axios": "^0.23.0",
+    "bootstrap": "^4.5.3",
+    "concurrently": "^6.3.0",
+    "electron-reload": "^2.0.0-alpha.1",
+    "ngx-electron": "^2.2.0",
+    "rxjs": "~6.6.0",
+    "tslib": "^2.3.0",
+    "typeorm": "^0.2.38",
+    "wait-on": "^6.0.0",
+    "webpack": "^5.60.0",
+    "webpack-cli": "^4.9.1",
+    "zone.js": "~0.11.4"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "~12.2.11",
+    "@angular/cli": "~12.2.11",
+    "@angular/compiler-cli": "~12.2.0",
+    "@types/jasmine": "~3.8.0",
+    "@types/node": "16.3.3",
+    "cross-env": "5.0.5",
+    "electron": "13.1.7",
+    "jasmine-core": "~3.8.0",
+    "karma": "~6.3.0",
+    "karma-chrome-launcher": "~3.1.0",
+    "karma-coverage": "~2.0.3",
+    "karma-jasmine": "~4.0.0",
+    "karma-jasmine-html-reporter": "~1.7.0",
+    "typescript": "~4.3.5"
+  }
+}
