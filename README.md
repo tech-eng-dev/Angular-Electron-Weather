@@ -13,10 +13,14 @@ Install Angular cli, Electron
 You can still use [Angular CLI](https://angular.io/cli) to create any angular component, services and etc.
 
 ### Run
-- On the root directory of the project, run this command to install dependencies: `npm install`
-- Run: `npm start`
+- On the root directory of the project, run this command to install dependencies: 
+`npm install`
+- Run: 
+`npm start`
 
 ### Build
 - `electron-builder` package was used to build packages for Mac, Windows, Linux
 - Run these commands to build for each platform: 
-`npm run electron:mac`, `npm run electron:windows`, `npm run electron:linux`
+`npm run electron:mac`
+`npm run electron:windows`
+`npm run electron:linux`
