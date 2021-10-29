@@ -19,7 +19,7 @@ You can still use [Angular CLI](https://angular.io/cli) to create any angular co
 `npm start`
 
 ### Build
-- `electron-builder` package was used to build packages for Mac, Windows, Linux
+- `electron-builder` package was used to build packages for Mac, Windows, Linux: run `npm install -g electron-builder`
 - Run these commands to build for each platform: 
 `npm run electron:mac`
 `npm run electron:windows`

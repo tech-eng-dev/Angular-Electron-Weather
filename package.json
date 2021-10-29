@@ -4,57 +4,29 @@
   "main": "app.js",
   "author": "jack",
   "scripts": {
+    "postinstall": "electron-builder install-app-deps",
     "ng": "ng",
     "electron": "wait-on http://localhost:4200 && electron . --serve",
     "start": "concurrently -k \"ng serve\" \"npm run electron\"",
-    "webpack:watch": "webpack --watch",
-    "start:web": "webpack-dev-server --content-base . --port 4200 --inline",
-    "build:electron:main": "tsc main.ts --outDir dist && copyfiles package.json dist && cd dist && npm install --prod && cd ..",
-    "build": "webpack --display-error-details && npm run build:electron:main",
-    "build:prod": "cross-env NODE_ENV=production npm run build",
-    "electron:serve": "npm run build:electron:main && electron ./dist --serve",
-    "electron:test": "electron ./dist",
-    "electron:dev": "npm run build && electron ./dist",
-    "electron:prod": "npm run build:prod && electron ./dist",
-    "electron:linux": "npm run build:prod && npx electron-builder build --linux",
-    "electron:windows": "npm run build:prod && npx electron-builder build --windows",
-    "electron:mac": "npm run build:prod && npx electron-builder build --mac",
-    "test": "karma start ./karma.conf.js",
-    "pree2e": "webdriver-manager update --standalone false --gecko false --quiet && npm run build",
-    "e2e": "protractor ./protractor.conf.js"
+    "build": "ng build",
+    "build:dev": "npm run build -- -c dev",
+    "build:prod": "npm run build -- -c production",
+    "ng:serve": "ng serve",
+    "ng:serve:web": "ng serve -c web -o",
+    "electron:serve": "wait-on http-get://localhost:4200/ && electron . --serve",
+    "electron:local": "npm run build:prod && electron .",
+    "electron:linux": "npm run build:prod && electron-builder build --linux",
+    "electron:windows": "npm run build:prod && electron-builder build --windows",
+    "electron:mac": "npm run build:prod && electron-builder build --mac",
+    "test": "ng test",
+    "e2e": "npm run build:prod && cross-env TS_NODE_PROJECT='e2e/tsconfig.e2e.json' mocha --timeout 300000 --require ts-node/register e2e/**/*.e2e.ts",
+    "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md",
+    "lint": "ng lint"
+  },
+  "build": {
+    "appId": "com.miniproject.app"
   },
   "private": true,
-  "build": {
-    "appId": "com.miniproject.app",
-    "category": "jack.app.min.app",
-    "dmg": {
-      "contents": [
-        {
-          "x": 110,
-          "y": 150
-        },
-        {
-          "x": 240,
-          "y": 150,
-          "type": "link",
-          "path": "/Applications"
-        }
-      ]
-    },
-    "linux": {
-      "target": [
-        "AppImage",
-        "deb"
-      ]
-    },
-    "win": {
-      "target": [
-        "squirrel",
-        "NSIS"
-      ],
-      "icon": "build/icon.ico"
-    }
-  },
   "dependencies": {
     "@angular/animations": "~12.2.0",
     "@angular/cdk": "^12.2.12",
@@ -81,7 +53,6 @@
     "typeorm": "^0.2.38",
     "wait-on": "^6.0.0",
     "webpack": "^5.60.0",
-    "webpack-cli": "^4.9.1",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
