@@ -9,51 +9,45 @@ const sequelize = new Sequelize({
   storage: 'db/database.sqlite'
 });
 const queryInterface = sequelize.getQueryInterface();
-queryInterface.createTable('users', {
+queryInterface.createTable('settings', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  firstName: {
+  url: {
     type: DataTypes.STRING,
     defaultValue: false,
     allowNull: true
   },
-  lastName: {
+  host: {
     type: DataTypes.STRING,
     defaultValue: false,
     allowNull: true
   },
-  email: {
-    type: DataTypes.STRING,
-    defaultValue: false,
-    allowNull: true
-  },
-  photoUrl: {
+  key: {
     type: DataTypes.STRING,
     defaultValue: false,
     allowNull: true
   }
 });
 
-ipcMain.on('add-user', async (event, arg) => {
-  queryInterface.bulkInsert('users', [{
-    firstName: arg?.firstName,
-    lastName: arg?.lastName,
-    email: arg?.email,
-    photoUrl: arg?.photoUrl
+ipcMain.on('add-settings', async (event, arg) => {
+  queryInterface.bulkInsert('settings', [{
+    url: arg?.url,
+    host: arg?.host,
+    key: arg?.key
   }]).then(result => {
     event.returnValue = result;
   });
 });
 
-ipcMain.on('get-user', async (event, arg) => {
+ipcMain.on('get-settings', async (event, arg) => {
   return queryInterface.sequelize.query(
-    `SELECT * FROM "users" WHERE email="${arg?.email}"`, {
+    `SELECT * FROM "settings" WHERE 1`, {
       type: queryInterface.sequelize.QueryTypes.SELECT
-    }).then(users => {
-      event.returnValue = users;
+    }).then(settings => {
+      event.returnValue = settings;
     });
 });
 /** --- */

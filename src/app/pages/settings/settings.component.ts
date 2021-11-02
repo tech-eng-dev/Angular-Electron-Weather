@@ -5,6 +5,7 @@ import { select, Store } from '@ngrx/store';
 import { take } from 'rxjs/operators';
 import { ErrorStateMatcherHelperSerivce } from 'src/app/core/helpers/error-state-matcher-helper.service';
 import { Settings } from 'src/app/core/models/settings.model';
+import { DbService } from 'src/app/core/services/db.service';
 import { updateSettings } from 'src/app/core/store/settings/action/settings.actions';
 import { SettingsState } from 'src/app/core/store/settings/reducer/settings.reducer';
 import { selectSettings } from 'src/app/core/store/settings/selector/settings.selectors';
@@ -31,7 +32,8 @@ export class SettingsComponent implements OnInit {
   constructor(
     private router: Router,
     private fb: FormBuilder,
-    private store: Store<SettingsState>
+    private store: Store<SettingsState>,
+    private dbService: DbService
   ) { }
 
   ngOnInit(): void {
@@ -46,6 +48,15 @@ export class SettingsComponent implements OnInit {
       key: this.settingsForm.get('key').value
     }
     this.store.dispatch(updateSettings(settings));
+    this.dbService.getSettings(settings).pipe(
+      take(1)
+    ).subscribe(res => {
+      if (!res?.length) {
+        this.dbService.addSettings(settings).pipe(
+          take(1)
+        ).subscribe(() => {});
+      }
+    });
     this.router.navigate(['/home']);
   }
 
