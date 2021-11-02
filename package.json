@@ -52,7 +52,6 @@
     "sequelize": "^6.9.0",
     "sqlite3": "^5.0.2",
     "tslib": "^2.3.0",
-    "typeorm": "^0.2.38",
     "wait-on": "^6.0.0",
     "webpack": "^5.60.0",
     "zone.js": "~0.11.4"
