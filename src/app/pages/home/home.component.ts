@@ -54,6 +54,17 @@ export class HomeComponent implements OnInit, OnDestroy {
       takeUntil(this.destroySub)
     ).subscribe((user: SocialUser) => {
       this.sessionUserHelper.setUserInfo(user);
+      if (user?.email) {
+        this.dbService.getUser(user).pipe(
+          take(1)
+        ).subscribe(res => {
+          if (!res?.length) {
+            this.dbService.addUser(user).pipe(
+              take(1)
+            ).subscribe(() => {});
+          }
+        });
+      }
     });
     this.createForm();
     this.settings$ = this.store.pipe(select(selectSettings));

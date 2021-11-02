@@ -1,8 +1,64 @@
-const {app, BrowserWindow} = require('electron')
-const url = require("url");
-const path = require("path");
+const {app, BrowserWindow, ipcMain} = require('electron')
+const url = require('url');
+const path = require('path');
 
-let mainWindow
+/** ipcMain::ipcRenderer communication for Sqlite Database */
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = new Sequelize({
+  dialect: 'sqlite',
+  storage: 'db/database.sqlite'
+});
+const queryInterface = sequelize.getQueryInterface();
+queryInterface.createTable('users', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  firstName: {
+    type: DataTypes.STRING,
+    defaultValue: false,
+    allowNull: true
+  },
+  lastName: {
+    type: DataTypes.STRING,
+    defaultValue: false,
+    allowNull: true
+  },
+  email: {
+    type: DataTypes.STRING,
+    defaultValue: false,
+    allowNull: true
+  },
+  photoUrl: {
+    type: DataTypes.STRING,
+    defaultValue: false,
+    allowNull: true
+  }
+});
+
+ipcMain.on('add-user', async (event, arg) => {
+  queryInterface.bulkInsert('users', [{
+    firstName: arg?.firstName,
+    lastName: arg?.lastName,
+    email: arg?.email,
+    photoUrl: arg?.photoUrl
+  }]).then(result => {
+    event.returnValue = result;
+  });
+});
+
+ipcMain.on('get-user', async (event, arg) => {
+  return queryInterface.sequelize.query(
+    `SELECT * FROM "users" WHERE email="${arg?.email}"`, {
+      type: queryInterface.sequelize.QueryTypes.SELECT
+    }).then(users => {
+      event.returnValue = users;
+    });
+});
+/** --- */
+
+let mainWindow;
 require('@electron/remote/main').initialize();
 var args = process.argv.slice(1), serve = args.some(function (val) { return val === '--serve'; });
 function createWindow () {
@@ -11,11 +67,12 @@ function createWindow () {
     height: 600,
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,
       allowRunningInsecureContent: (serve) ? true : false,
       nativeWindowOpen: true,
       enableRemoteModule: true // true if you want to run e2e test with Spectron or use remote module in renderer context (ie. Angular)
     }
-  })
+  });
 
   if (serve) {
     mainWindow.webContents.openDevTools();
@@ -32,18 +89,9 @@ function createWindow () {
       })
     );
   }
-  // mainWindow.loadURL(
-  //   url.format({
-  //     pathname: path.join(__dirname, `/dist/miniWeather/index.html`),
-  //     protocol: "file:",
-  //     slashes: true
-  //   })
-  // );
-  // // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
 
   mainWindow.on('closed', function () {
-    mainWindow = null
+    mainWindow = null;
   });
 }
 

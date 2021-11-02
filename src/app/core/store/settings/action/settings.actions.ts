@@ -5,7 +5,3 @@ export const updateSettings = createAction(
   '[Settings] Update Settings',
   (settings: Settings) => ({settings})
 );
-
-
-
-
