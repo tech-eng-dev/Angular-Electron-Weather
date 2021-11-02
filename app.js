@@ -50,6 +50,54 @@ ipcMain.on('get-settings', async (event, arg) => {
       event.returnValue = settings;
     });
 });
+
+queryInterface.createTable('users', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  firstName: {
+    type: DataTypes.STRING,
+    defaultValue: false,
+    allowNull: true
+  },
+  lastName: {
+    type: DataTypes.STRING,
+    defaultValue: false,
+    allowNull: true
+  },
+  email: {
+    type: DataTypes.STRING,
+    defaultValue: false,
+    allowNull: true
+  },
+  photoUrl: {
+    type: DataTypes.STRING,
+    defaultValue: false,
+    allowNull: true
+  }
+});
+
+ipcMain.on('add-user', async (event, arg) => {
+  queryInterface.bulkInsert('users', [{
+    firstName: arg?.firstName,
+    lastName: arg?.lastName,
+    email: arg?.email,
+    photoUrl: arg?.photoUrl
+  }]).then(result => {
+    event.returnValue = result;
+  });
+});
+
+ipcMain.on('get-user', async (event, arg) => {
+  return queryInterface.sequelize.query(
+    `SELECT * FROM "users" WHERE email="${arg?.email}"`, {
+      type: queryInterface.sequelize.QueryTypes.SELECT
+    }).then(settings => {
+      event.returnValue = settings;
+    });
+});
 /** --- */
 
 let mainWindow;

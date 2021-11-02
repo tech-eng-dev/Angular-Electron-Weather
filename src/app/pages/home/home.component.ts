@@ -13,6 +13,7 @@ import { SettingsState } from 'src/app/core/store/settings/reducer/settings.redu
 import { selectSettings } from 'src/app/core/store/settings/selector/settings.selectors';
 import { AxiosRequestConfig } from "axios";
 import { WeatherApiService } from 'src/app/core/services/weather-api.service';
+import { DbService } from 'src/app/core/services/db.service';
 
 @Component({
   selector: 'app-home',
@@ -43,7 +44,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private weatherApiService: WeatherApiService,
     private snackBar: MatSnackBar,
     private fb: FormBuilder,
-    private store: Store<SettingsState>
+    private store: Store<SettingsState>,
+    private dbService: DbService
   ) {
   }
 
@@ -52,6 +54,17 @@ export class HomeComponent implements OnInit, OnDestroy {
       takeUntil(this.destroySub)
     ).subscribe((user: SocialUser) => {
       this.sessionUserHelper.setUserInfo(user);
+      if (user?.email) {
+        this.dbService.getUser(user).pipe(
+          take(1)
+        ).subscribe(res => {
+          if (!res?.length) {
+            this.dbService.addUser(user).pipe(
+              take(1)
+            ).subscribe(() => {});
+          }
+        });
+      }
     });
     this.createForm();
     this.settings$ = this.store.pipe(select(selectSettings));
